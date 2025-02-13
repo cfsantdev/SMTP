@@ -106,8 +106,14 @@ app.post('/smtp', (req, res) => {
         text: 'Email de confirmação enviado utilizando a o serviço SMTP.',
         html: template.replace('[Nome do Cliente]', nome).replace('[Número do pedido]', id)
     })
-    .then(() => res.status(200).json({ message: 'Email recebido com sucesso!', email, uuid: id }))
-    .catch((err) => res.status(400).json({ error: 'Erro ao enviar email: ' + err }));
+    .then(() => {
+        console.log('Nodemailer(200): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
+        res.status(200).json({ message: 'Email recebido com sucesso!', email, uuid: id })
+    })
+    .catch((err) => {
+        console.log('Nodemailer(400): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
+        res.status(400).json({ error: 'Erro ao enviar email: ' + err })
+    });
 });
 
 // Iniciando o servidor
