@@ -108,7 +108,7 @@ app.post('/smtp', (req, res) => {
     })
     .then(() => {
         console.log('Nodemailer(200): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
-        res.status(200).json({ message: 'Email recebido com sucesso!', email, uuid: id })
+        res.status(200).json({ uuid: id, email, nome: nome })
     })
     .catch((err) => {
         console.log('Nodemailer(400): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
