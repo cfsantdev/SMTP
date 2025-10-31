@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>README - Serviço de Envio de E-mails Automatizado</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f7;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    h1, h2, h3 {
+      color: #222;
+    }
+    code, pre {
+      background-color: #1e1e1e;
+      color: #dcdcdc;
+      border-radius: 6px;
+      padding: 0.75rem;
+      display: block;
+      overflow-x: auto;
+      font-family: 'Consolas', monospace;
+      margin-top: 0.5rem;
+    }
+    a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .box {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .tag {
+      display: inline-block;
+      background: #0077cc;
+      color: #fff;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-right: 0.3rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>📧 Serviço de Envio de E-mails Automatizado (SMTP)</h1>
+
+  <div class="box">
+    <p>Este projeto implementa um <strong>serviço de envio de e-mails automatizado</strong> utilizando <strong>Node.js</strong> com o middleware <strong>NodeMailer</strong>.</p>
+    <p>O envio é realizado via protocolo <strong>SMTP</strong> e configurado por variáveis de ambiente armazenadas em um arquivo <code>.env</code>.</p>
+  </div>
+
+  <h2>🧩 Tecnologias Utilizadas</h2>
+  <ul>
+    <li><span class="tag">Node.js</span> — Ambiente de execução</li>
+    <li><span class="tag">Express</span> — Framework HTTP (opcional)</li>
+    <li><span class="tag">NodeMailer</span> — Envio de e-mails via SMTP</li>
+    <li><span class="tag">dotenv</span> — Leitura das variáveis de ambiente</li>
+  </ul>
+
+  <h2>⚙️ Configuração do Ambiente</h2>
+
+  <div class="box">
+    <h3>1️⃣ Crie o arquivo <code>.env</code></h3>
+    <p>Crie um arquivo chamado <code>.env</code> na raiz do projeto com o seguinte conteúdo:</p>
+
+    <pre><code>PORT=3000
+SMTP_USER=seu_email@gmail.com
+SMTP_PASS=sua_chave_de_aplicativo
+</code></pre>
+
+    <p>⚠️ <strong>Atenção:</strong> Para que o envio funcione com o Gmail, é necessário gerar uma <strong>chave de aplicativo</strong> em sua conta Google.</p>
+
+    <p>Você pode criar a chave acessando o painel oficial da Google:  
+      <a href="https://myaccount.google.com/apppasswords" target="_blank">
+        https://myaccount.google.com/apppasswords
+      </a>
+    </p>
+  </div>
+
+  <div class="box">
+    <h3>2️⃣ Instale as dependências</h3>
+    <pre><code>npm install express nodemailer dotenv</code></pre>
+  </div>
+
+  <div class="box">
+    <h3>3️⃣ Exemplo básico de servidor</h3>
+    <pre><code>import express from 'express';
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+
+dotenv.config();
+const app = express();
+
+app.use(express.json());
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  }
+});
+
+app.post('/send', async (req, res) => {
+  const { to, subject, text } = req.body;
+  try {
+    await transporter.sendMail({
+      from: process.env.SMTP_USER,
+      to,
+      subject,
+      text
+    });
+    res.status(200).send('✅ E-mail enviado com sucesso!');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('❌ Falha ao enviar e-mail.');
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
+</code></pre>
+  </div>
+
+  <div class="box">
+    <h3>4️⃣ Teste o serviço</h3>
+    <p>Envie uma requisição <code>POST</code> para o endpoint <code>/send</code>:</p>
+    <pre><code>{
+  "to": "destinatario@exemplo.com",
+  "subject": "Teste de Envio",
+  "text": "Olá! Este é um e-mail de teste automatizado."
+}</code></pre>
+  </div>
+
+  <div class="box">
+    <h3>💡 Dica de Segurança</h3>
+    <ul>
+      <li>Jamais commit seu arquivo <code>.env</code> no repositório.</li>
+      <li>Adicione o <code>.env</code> ao seu <code>.gitignore</code>.</li>
+      <li>Utilize variáveis de ambiente seguras em produção.</li>
+    </ul>
+  </div>
+
+  <footer style="margin-top: 3rem; font-size: 0.9rem; color: #555;">
+    <p>Feito com ❤️ por K.IO</p>
+  </footer>
+</body>
+</html>
