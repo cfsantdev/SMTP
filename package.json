@@ -1,15 +1,15 @@
 {
-  "name": "smtp",
+  "name": "Serviço de Envio de Emails Automatizado",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "type": "module",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./src/app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "@types/uuid": "^10.0.0",
     "body-parser": "^1.20.3",

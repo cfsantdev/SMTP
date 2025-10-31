@@ -1,48 +1,4 @@
-require('dotenv/config');
-const NODEMAILER = require('nodemailer');
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const app = express();
-const uuid = require('uuid');
-
-// Middleware para processar JSON
-app.use(bodyParser.json());
-app.use(cors({
-    origin: '*'
-}))
-
-app.get('/', (req, res) => {
-    res.send('SMTP Service started...');
-});
-
-// Rota para receber um email via POST
-app.post('/smtp', (req, res) => {
-    const { email, nome } = req.body;
-    
-    // Expressão regular simples para validar email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
-    if (!email) {
-        return res.status(400).json({ error: 'O campo email é obrigatório.' });
-    }
-
-    if (!emailRegex.test(email)) {
-        return res.status(400).json({ error: 'O email fornecido é inválido.' });
-    }
-
-    const transporter = NODEMAILER.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false, // true para 465, false para outros
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS
-        }
-    });
-
-    let id = uuid.v4();
-    let template = `<!DOCTYPE html>
+const template = `<!DOCTYPE html>
                 <html>
                 <head>
                     <meta charset="UTF-8">
@@ -97,26 +53,17 @@ app.post('/smtp', (req, res) => {
                         </div>
                     </div>
                 </body>
-                </html>`;
+            </html>`;
 
-    transporter.sendMail({
-        from: transporter.options.auth.user,
-        to: email,
-        subject: 'VC NUTRIÇÃO ESPORTIVA - CONFIRMAÇÃO DE COMPRA',
-        text: 'Email de confirmação enviado utilizando a o serviço SMTP.',
-        html: template.replace('[Nome do Cliente]', nome).replace('[Número do pedido]', id)
-    })
-    .then(() => {
-        console.log('Nodemailer(200): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
-        res.status(200).json({ uuid: id, email, nome: nome })
-    })
-    .catch((err) => {
-        console.log('Nodemailer(400): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
-        res.status(400).json({ error: 'Erro ao enviar email: ' + err })
-    });
-});
+class MailTemplate {
+    constructor(nome, id){
+        this.nome = nome;
+        this.id = id;
+    }
 
-// Iniciando o servidor
-app.listen(process.env.PORT, () => {
-    console.log(`Servidor rodando na porta ${process.env.PORT}`);
-});
+    get = function (){
+        return template.replace('[Nome do Cliente]', this.nome).replace('[Número do pedido]', this.id);
+    }
+}
+
+export default MailTemplate;
