@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "start": "node ./src/index.js"
+    "start": "node ./src/app.js"
   },
   "keywords": [],
   "author": "",
