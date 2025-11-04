@@ -1,6 +1,8 @@
 
+import 'dotenv/config';
 import MailTemplate from '../config/mail.template.js';
 import NodeMailer from 'nodemailer';
+import { Resend } from 'resend';
 import { v4 as uuidv4 } from 'uuid';
 
 class SmtpRoute {
@@ -36,32 +38,21 @@ class SmtpRoute {
 
     send = async function(req, res, email, nome, id) {
         return new Promise(async (resolve, reject) => {
-            const transporter = NodeMailer.createTransport({
-                host: 'smtp.gmail.com',
-                port: 587,
-                secure: false, // true para 465, false para outros
-                auth: {
-                    user: process.env.SMTP_USER,
-                    pass: process.env.SMTP_PASS
-                }
-            });
-
-            if(!await transporter.verify()){
-                return res.status(400).json({ error: 'Falha na verificação do transportador.' });
-            }
+            const resend = new Resend(process.env.SMTP_KEY);
             
-            await transporter.sendMail({
-                from: transporter.options.auth.user,
+            await resend.emails.send({
+                from: process.env.SMTP_USER,
                 to: email,
                 subject: 'VC NUTRIÇÃO ESPORTIVA - CONFIRMAÇÃO DE COMPRA',
-                text: 'Email de confirmação enviado utilizando a o serviço SMTP.',
-                html: new MailTemplate(nome,id).get()
-            })
-            .then((info) => {
-                console.log('Nodemailer(200): { "uuid": "' + id + '"  "info": "' + JSON.stringify(info) + '" }');
+                html: new MailTemplate(nome,id).get(),
+            }).then((data) => {
+                if(data.error){
+                    console.log('Nodemailer(400): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '", "erro": "' + JSON.stringify(data.error) + '" }');
+                    res.status(data.error.statusCode).json({ error: 'Erro ao enviar email: ' + data.error.message });
+                }
+                console.log('Nodemailer(200): { "uuid": "' + id + '"  "data": "' + JSON.stringify(data) + '" }');
                 res.status(200).json({ uuid: id, email, nome: nome })
-            })
-            .catch((err) => {
+            }).catch((err) => {
                 console.log('Nodemailer(400): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '", "erro": "' + JSON.stringify(err) + '" }');
                 res.status(400).json({ error: 'Erro ao enviar email: ' + err })
             });
