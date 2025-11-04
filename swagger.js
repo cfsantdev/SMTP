@@ -10,8 +10,8 @@ const doc = {
     version: '1.0.0',
   },
   components: [],
-  host: 'localhost:3000',
-  schemes: ['http'],
+  host: process.env.HOST,
+  schemes: ['http','https'],
   consumes: ['application/json'],
   produces: ['application/json'],
 };

@@ -7,7 +7,10 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/"
+      "url": "http://smtp-ztv5.onrender.com/"
+    },
+    {
+      "url": "https://smtp-ztv5.onrender.com/"
     }
   ],
   "paths": {
