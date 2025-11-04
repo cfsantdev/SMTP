@@ -32,8 +32,8 @@ class SmtpRoute {
                     user: process.env.SMTP_USER,
                     pass: process.env.SMTP_PASS
                 },
-                connectionTimeout: 10000, // 10 segundos de timeout para as requisições
-                socketTimeout: 20000,     // 20 segundos de timeout para a conexão
+                connectionTimeout: 20000, // 10 segundos de timeout para as requisições
+                socketTimeout: 30000,     // 20 segundos de timeout para a conexão
             });
             
             if(!transporter.verify()){
