@@ -2,7 +2,6 @@ import Router from '../routes/router.js'
 import swaggerUi from 'swagger-ui-express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import fs from 'fs';
 
 
 class MiddlewareConfig {
@@ -38,7 +37,7 @@ class MiddlewareConfig {
 
         // Configuração de CORS
         this.app.use(cors({
-            origin: '*',
+            origin: ['*', 'https://smtp-ztv5.onrender.com/'],
             methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
             allowedHeaders: ['Content-Type', 'Authorization']
         }));
