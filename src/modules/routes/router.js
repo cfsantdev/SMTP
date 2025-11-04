@@ -1,16 +1,15 @@
-import SmtpRoute from './smtp.route.js';
+import defautRoute from './default.route.js';
+import smtpRoute from './smtp.route.js';
 
 class Router {
     constructor(app){
         this.app = app;
+        this.config();
     }
 
     config = function () {
-        this.app.get('/', (req, res) => {
-            res.send('SMTP Service started...');
-        });
-        
-        new SmtpRoute(this.app).set();
+        new defautRoute(this.app);
+        new smtpRoute(this.app);
     }
 }
 

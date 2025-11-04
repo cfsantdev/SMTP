@@ -1,14 +1,15 @@
 
-import MailTemplate from '../config/mail.template.js'
+import MailTemplate from '../config/mail.template.js';
 import NodeMailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid';
 
 class SmtpRoute {
     constructor(app){
         this.app = app;
+        this.config();
     }
 
-    set = function() {
+    config = function(){
         this.app.post('/smtp', (req, res) => {
             const { email, nome } = req.body;
             
@@ -34,6 +35,10 @@ class SmtpRoute {
                 connectionTimeout: 10000, // 10 segundos de timeout para as requisições
                 socketTimeout: 20000,     // 20 segundos de timeout para a conexão
             });
+            
+            if(!transporter.verify()){
+                return res.status(400).json({ error: 'Falha na verificação do transportador.' });
+            }
         
             let id = uuidv4();
         

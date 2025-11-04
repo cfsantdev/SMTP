@@ -5,7 +5,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "node ./src/app.js"
+    "start": "node ./src/app.js",
+    "swagger": "node swagger.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,10 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "nodemailer": "^6.10.0",
+    "swagger-ui-express": "^5.0.1",
     "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "swagger-autogen": "^2.23.7"
   }
 }
