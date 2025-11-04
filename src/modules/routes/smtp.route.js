@@ -1,7 +1,6 @@
 
 import 'dotenv/config';
 import MailTemplate from '../config/mail.template.js';
-import NodeMailer from 'nodemailer';
 import { Resend } from 'resend';
 import { v4 as uuidv4 } from 'uuid';
 
