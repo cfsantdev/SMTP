@@ -26,7 +26,7 @@ class MiddlewareConfig {
 
         // Timeout global de requisições
         this.app.use((req, res, next) => {
-            req.setTimeout(10000, () => {
+            req.setTimeout(30000, () => {
                 console.error('⏱️ Timeout atingido para a requisição.');
                 if (!res.headersSent) {
                     res.status(408).json({ error: 'Tempo limite atingido para processar a requisição.' });
@@ -37,7 +37,7 @@ class MiddlewareConfig {
 
         // Configuração de CORS
         this.app.use(cors({
-            origin: ['*', 'https://smtp-ztv5.onrender.com/'],
+            origin: ['*', 'http://localhost', 'https://localhost', 'http://smtp-ztv5.onrender.com/', 'https://smtp-ztv5.onrender.com/'],
             methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
             allowedHeaders: ['Content-Type', 'Authorization']
         }));
