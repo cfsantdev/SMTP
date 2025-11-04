@@ -10,7 +10,7 @@ class SmtpRoute {
     }
 
     config = function(){
-        this.app.post('/smtp', (req, res) => {
+        this.app.post('/smtp', async (req, res) => {
             const { email, nome } = req.body;
             
             // Expressão regular simples para validar email
@@ -39,9 +39,7 @@ class SmtpRoute {
                     }
                 });
 
-                console.log('SMTP(T): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
-
-                this.send(req, res, transporter, email, nome, id);
+                await this.send(req, res, transporter, email, nome, id);
             } catch (err) {
                 console.log('Nodemailer(400): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
                 res.status(400).json({ error: 'Erro ao enviar email: ' + err })
@@ -49,12 +47,10 @@ class SmtpRoute {
         });
     }
 
-    send = function(req, res, transporter, email, nome, id) {
-        if(!transporter.verify()){
+    send = async function(req, res, transporter, email, nome, id) {
+        if(!await transporter.verify()){
             return res.status(400).json({ error: 'Falha na verificação do transportador.' });
         }
-
-        console.log('SMTP(S): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
     
         transporter.sendMail({
             from: transporter.options.auth.user,
