@@ -23,4 +23,6 @@ app.listen(process.env.PORT, () => {
     console.log('-');
     console.log('-> Acesse o arquivo ".README" ou contate o administrador do sistema para informações de configuração;');
     console.log(`-> Serviço rodando na porta ${process.env.PORT};`);
+    console.log('-');
+    console.log('LOGGER:');
 });

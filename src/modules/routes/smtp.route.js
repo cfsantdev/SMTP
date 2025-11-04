@@ -26,6 +26,8 @@ class SmtpRoute {
 
             let id = uuidv4();
 
+            console.log('SMTP(R): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
+
             try {
                 const transporter = NodeMailer.createTransport({
                     host: 'smtp.gmail.com',
@@ -36,6 +38,8 @@ class SmtpRoute {
                         pass: process.env.SMTP_PASS
                     }
                 });
+
+                console.log('SMTP(T): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
 
                 this.send(req, res, transporter, email, nome, id);
             } catch (err) {
@@ -49,6 +53,8 @@ class SmtpRoute {
         if(!transporter.verify()){
             return res.status(400).json({ error: 'Falha na verificação do transportador.' });
         }
+
+        console.log('SMTP(S): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
     
         transporter.sendMail({
             from: transporter.options.auth.user,
