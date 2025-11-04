@@ -11,35 +11,22 @@ class SmtpRoute {
 
     config = function(){
         this.app.post('/smtp', async (req, res) => {
-            const { email, nome } = req.body;
-            
-            // Expressão regular simples para validar email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            
-            if (!email) {
-                return res.status(400).json({ error: 'O campo email é obrigatório.' });
-            }
-        
-            if (!emailRegex.test(email)) {
-                return res.status(400).json({ error: 'O email fornecido é inválido.' });
-            }
-
             let id = uuidv4();
-
-            console.log('SMTP(R): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
-
             try {
-                const transporter = NodeMailer.createTransport({
-                    host: 'smtp.gmail.com',
-                    port: 587,
-                    secure: false, // true para 465, false para outros
-                    auth: {
-                        user: process.env.SMTP_USER,
-                        pass: process.env.SMTP_PASS
-                    }
-                });
+                const { email, nome } = req.body;
 
-                await this.send(req, res, transporter, email, nome, id);
+                // Expressão regular simples para validar email
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (!email) {
+                    return res.status(400).json({ error: 'O campo email é obrigatório.' });
+                }
+            
+                if (!emailRegex.test(email)) {
+                    return res.status(400).json({ error: 'O email fornecido é inválido.' });
+                }
+                
+                await this.send(req, res, email, nome, id);
             } catch (err) {
                 console.log('Nodemailer(400): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
                 res.status(400).json({ error: 'Erro ao enviar email: ' + err })
@@ -47,10 +34,22 @@ class SmtpRoute {
         });
     }
 
-    send = async function(req, res, transporter, email, nome, id) {
-        if(!await transporter.verify()){
-            return res.status(400).json({ error: 'Falha na verificação do transportador.' });
-        } else {
+    send = async function(req, res, email, nome, id) {
+        return new Promise(async (resolve, reject) => {
+            const transporter = NodeMailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 587,
+                secure: false, // true para 465, false para outros
+                auth: {
+                    user: process.env.SMTP_USER,
+                    pass: process.env.SMTP_PASS
+                }
+            });
+
+            if(!await transporter.verify()){
+                return res.status(400).json({ error: 'Falha na verificação do transportador.' });
+            }
+            
             await transporter.sendMail({
                 from: transporter.options.auth.user,
                 to: email,
@@ -63,10 +62,10 @@ class SmtpRoute {
                 res.status(200).json({ uuid: id, email, nome: nome })
             })
             .catch((err) => {
-                console.log('Nodemailer(400): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
+                console.log('Nodemailer(400): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '", "erro": "' + JSON.stringify(err) + '" }');
                 res.status(400).json({ error: 'Erro ao enviar email: ' + err })
             });
-        }
+        });
     }
 }
 
