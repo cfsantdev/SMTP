@@ -37,7 +37,7 @@ class SmtpRoute {
                     }
                 });
 
-                this.send(transporter);
+                this.send(transporter, email, nome, id);
             } catch (err) {
                 console.log('Nodemailer(400): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
                 res.status(400).json({ error: 'Erro ao enviar email: ' + err })
@@ -45,7 +45,7 @@ class SmtpRoute {
         });
     }
 
-    send = function(transporter) {
+    send = function(transporter, email, nome, id) {
         if(!transporter.verify()){
             return res.status(400).json({ error: 'Falha na verificação do transportador.' });
         }
