@@ -50,23 +50,23 @@ class SmtpRoute {
     send = async function(req, res, transporter, email, nome, id) {
         if(!await transporter.verify()){
             return res.status(400).json({ error: 'Falha na verificação do transportador.' });
+        } else {
+            await transporter.sendMail({
+                from: transporter.options.auth.user,
+                to: email,
+                subject: 'VC NUTRIÇÃO ESPORTIVA - CONFIRMAÇÃO DE COMPRA',
+                text: 'Email de confirmação enviado utilizando a o serviço SMTP.',
+                html: new MailTemplate(nome,id).get()
+            })
+            .then((info) => {
+                console.log('Nodemailer(200): { "uuid": "' + id + '"  "info": "' + JSON.stringify(info) + '" }');
+                res.status(200).json({ uuid: id, email, nome: nome })
+            })
+            .catch((err) => {
+                console.log('Nodemailer(400): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
+                res.status(400).json({ error: 'Erro ao enviar email: ' + err })
+            });
         }
-    
-        transporter.sendMail({
-            from: transporter.options.auth.user,
-            to: email,
-            subject: 'VC NUTRIÇÃO ESPORTIVA - CONFIRMAÇÃO DE COMPRA',
-            text: 'Email de confirmação enviado utilizando a o serviço SMTP.',
-            html: new MailTemplate(nome,id).get()
-        })
-        .then(() => {
-            console.log('Nodemailer(200): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
-            res.status(200).json({ uuid: id, email, nome: nome })
-        })
-        .catch((err) => {
-            console.log('Nodemailer(400): { "uuid": "' + id + '"  "email": "' + email + '", "nome": "' + nome + '" }');
-            res.status(400).json({ error: 'Erro ao enviar email: ' + err })
-        });
     }
 }
 
